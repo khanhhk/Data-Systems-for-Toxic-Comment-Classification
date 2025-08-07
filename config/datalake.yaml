@@ -1,0 +1,9 @@
+fake_data:
+  folder_path: ./data
+
+datalake:
+  endpoint: localhost:9000
+  bucket_name: olist
+  folder_name: pump
+  access_key: minio_access_key
+  secret_key: minio_secret_key
