@@ -1,9 +1,11 @@
-fake_data:
-  folder_path: ./data
+data:
+  folder_path: ./data/olist
+  deltalake_folder_path: ./data/deltalake
+
 
 datalake:
   endpoint: localhost:9000
-  bucket_name: olist
-  folder_name: pump
+  bucket_name: raw
+  folder_name: olist
   access_key: minio_access_key
   secret_key: minio_secret_key

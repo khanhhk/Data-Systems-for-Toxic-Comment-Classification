@@ -1,0 +1,5 @@
+minio==7.2.16
+PyYAML==6.0.2
+pandas==2.3.1
+numpy==2.0.2
+deltalake==1.1.3
