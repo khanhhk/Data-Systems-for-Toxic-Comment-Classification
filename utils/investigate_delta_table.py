@@ -14,7 +14,7 @@ def main():
     # Load Delta Lake table
     print("*" * 80)
     dt = DeltaTable(
-        Path(data_cfg["deltalake_folder_path"])/"olist_customers_dataset",
+        Path(data_cfg["deltalake_folder_path"])/"data",
         version=0)
     print("[INFO] Loaded Delta Lake table successfully!")
 
@@ -32,7 +32,7 @@ def main():
 
     # Query some data
     print("[INFO] Querying some data from the Delta Lake table:")
-    print(dt.to_pandas(columns=["customer_id"]))
+    print(dt.to_pandas(columns=["comment_text", "labels"]))
     print("*" * 40)
 
     # Investigate history of actions performed on the table

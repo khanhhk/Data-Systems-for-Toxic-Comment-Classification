@@ -1,11 +1,11 @@
 data:
-  folder_path: ./data/olist
+  folder_path: ./data/raw
   deltalake_folder_path: ./data/deltalake
 
 
 datalake:
   endpoint: localhost:9000
   bucket_name: raw
-  folder_name: olist
+  folder_name: toxic_text
   access_key: minio_access_key
   secret_key: minio_secret_key

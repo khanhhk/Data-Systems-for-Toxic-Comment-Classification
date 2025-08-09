@@ -11,8 +11,8 @@ CFG_PATH = "./config/datalake.yaml"
 
 if __name__ == "__main__":
     cfg = load_cfg(CFG_PATH)
-
-    csv_files = glob("./data/olist/*.csv")
+    
+    csv_files = glob(cfg["data"]["folder_path"] + "/*.csv")
 
     # Write data into deltalake format
     for csv_file in csv_files:
