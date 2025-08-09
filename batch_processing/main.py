@@ -1,72 +1,85 @@
-import os
-import logging
+import sys
 import traceback
-
-from utils.helpers import load_cfg
-from etl.core.spark_session import create_spark_session
-from etl.core.minio_config import load_minio_config
-from etl import transform
-
+import pandas as pd
+from loguru import logger
+from utils.config import Config
+from transformers import AutoTokenizer
 from pyspark.sql import DataFrame
+from pyspark.sql.functions import pandas_udf
+from utils.helpers import load_cfg
+from spark_session import create_spark_session
+from minio_config import load_minio_config
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
+CFG_FILE = "./config/datalake.yaml"
+datalake_cfg = load_cfg(CFG_FILE)["datalake"]
 
-def apply_transform(table_name: str, df: DataFrame) -> DataFrame:
-    normalized_name = table_name.replace("olist_", "").replace("_dataset", "")
-    func_name = f"transform_{normalized_name}"
-    try:
-        transform_func = getattr(transform, func_name)
-        return transform_func(df)
-    except AttributeError:
-        logging.warning(f"No transform function found for: {func_name}. Using original data.")
-        return df
+CFG_FILE_SPARK = "./config/spark.yaml"
+spark_cfg = load_cfg(CFG_FILE_SPARK)["spark_config"]
 
-def write_to_postgres(df: DataFrame, table_name: str):
-    import os
-    from dotenv import load_dotenv
-    load_dotenv(".env")
-    jdbc_url = f"jdbc:postgresql://{os.getenv('POSTGRES_HOST')}:5432/{os.getenv('POSTGRES_DB')}"
-    df.write \
-        .format("jdbc") \
-        .option("url", jdbc_url) \
-        .option("dbtable", table_name) \
-        .option("user", os.getenv("POSTGRES_USER")) \
-        .option("password", os.getenv("POSTGRES_PASSWORD")) \
-        .option("driver", "org.postgresql.Driver") \
-        .mode("overwrite") \
-        .save()
+tokenizer = AutoTokenizer.from_pretrained(Config.MODEL_NAME)
 
-def main():
-    cfg = load_cfg("config/datalake.yaml")
-    spark_cfg = load_cfg("config/spark.yaml")["spark_config"]
-    minio_cfg = cfg["datalake"]
-    delta_folder_path = cfg["data"]["deltalake_folder_path"]
-    memory = spark_cfg["executor_memory"]
-    jar_paths = [
-        "jars/postgresql-42.4.3.jar",
-        "jars/aws-java-sdk-bundle-1.12.262.jar",
-        "jars/hadoop-aws-3.3.4.jar"
-    ]
-
-    spark = create_spark_session(memory, jar_paths)
-    load_minio_config(spark.sparkContext, minio_cfg)
-
-    for table_folder in os.listdir(delta_folder_path):
-        full_path = os.path.join(delta_folder_path, table_folder)
-        if not os.path.isdir(full_path):
-            continue
-        try:
-            logging.info(f"Processing: {table_folder}")
-            delta_path = f"s3a://{minio_cfg['bucket_name']}/{minio_cfg['folder_name']}/{table_folder}"
-            df = spark.read.format("delta").load(delta_path)
-            df_transformed = apply_transform(table_folder, df)
-            write_to_postgres(df_transformed, f"staging.{table_folder}")
-            logging.info(f"Finished: {table_folder}\\n")
-        except Exception as e:
-            logging.error(f"Error processing {table_folder}: {e}")
-            traceback.print_exc()
-
-    spark.stop()
+@pandas_udf("array<int>, array<int>")
+def tokenize_udf(texts: pd.Series):
+    encoded = tokenizer(
+        texts.tolist(),
+        max_length=Config.MAX_LENGTH,
+        truncation=True,
+        padding=False
+    )
+    return pd.Series(encoded["input_ids"]), pd.Series(encoded["attention_mask"])
 
 if __name__ == "__main__":
-    main()
+    try:
+        spark = create_spark_session(
+            memory=spark_cfg["executor_memory"],
+            jar_paths=[
+                "jars/postgresql-42.7.3.jar",
+                "jars/hadoop-aws-3.3.4.jar",
+                "jars/delta-storage-2.4.0.jar"
+            ],
+            app_name="Batch Processing"
+        )
+
+        minio_cfg = {
+            "endpoint": datalake_cfg["endpoint"],
+            "bucket_name": datalake_cfg["bucket_name"],
+            "folder_name": datalake_cfg["folder_name"],
+            "access_key": datalake_cfg["access_key"],
+            "secret_key": datalake_cfg["secret_key"]
+        }
+        load_minio_config(spark.sparkContext, minio_cfg)
+
+        for table_name in cfg["tables"]:
+            delta_path = f"s3a://{minio_cfg['bucket_name']}/{minio_cfg['folder_name']}/{table_name}"
+            logger.info(f"📥 Reading Delta table from {delta_path}")
+            df: DataFrame = spark.read.format("delta").load(delta_path)
+
+            logger.info(f"✅ Loaded {table_name} with {df.count()} rows.")
+
+            # Apply tokenizer to comment_text
+            df_tokenized = df.withColumn("input_ids", tokenize_udf(df["comment_text"]).getItem(0)) \
+                             .withColumn("attention_mask", tokenize_udf(df["comment_text"]).getItem(1))
+
+            # Drop nulls if needed
+            df_tokenized = df_tokenized.dropna()
+
+            # Write to Postgres staging
+            jdbc_url = f"jdbc:postgresql://{postgres_cfg['host']}:{postgres_cfg['port']}/{postgres_cfg['database']}"
+            df_tokenized.write \
+                .format("jdbc") \
+                .option("url", jdbc_url) \
+                .option("dbtable", f"staging.{table_name}") \
+                .option("user", postgres_cfg["user"]) \
+                .option("password", postgres_cfg["password"]) \
+                .option("driver", "org.postgresql.Driver") \
+                .mode("overwrite") \
+                .save()
+
+            logger.info(f"✅ Written {table_name} to Postgres staging.")
+
+        spark.stop()
+
+    except Exception as e:
+        traceback.print_exc(file=sys.stderr)
+        logger.error(f"❌ Batch processing failed: {e}")
+        sys.exit(1)
