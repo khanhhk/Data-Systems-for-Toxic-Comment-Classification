@@ -6,6 +6,6 @@ data:
 datalake:
   endpoint: localhost:9000
   bucket_name: raw
-  folder_name: toxic_text
+  folder_name: deltalake
   access_key: minio_access_key
   secret_key: minio_secret_key

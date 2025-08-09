@@ -14,7 +14,7 @@ def main():
     # Load Delta Lake table
     print("*" * 80)
     dt = DeltaTable(
-        Path(data_cfg["deltalake_folder_path"])/"data",
+        Path(data_cfg["deltalake_folder_path"])/"toxic_text",
         version=0)
     print("[INFO] Loaded Delta Lake table successfully!")
 
