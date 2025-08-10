@@ -2,7 +2,7 @@ version: "3.8"
 services:
   trino:
     ports:
-      - "8080:8080"
+      - "8084:8080"
     container_name: datalake-trino
     image: "trinodb/trino:410"
     hostname: trino

@@ -1,4 +1,3 @@
-import os
 from postgresql_client import PostgresSQLClient
 from helpers import load_cfg
 CFG_PATH = "./configs/config.yaml"

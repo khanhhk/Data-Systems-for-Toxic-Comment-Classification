@@ -1,4 +1,3 @@
-import os
 import pandas as pd
 
 data_sample = "./data/raw/toxic_text.csv"
