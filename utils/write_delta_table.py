@@ -1,30 +1,28 @@
-import os
 import shutil
-from glob import glob
 
 import pandas as pd
 from helpers import load_cfg
-
+from pathlib import Path
 from deltalake.writer import write_deltalake
 
-CFG_PATH = "./config/datalake.yaml"
+CFG_PATH = "./configs/config.yaml"
 
 if __name__ == "__main__":
     cfg = load_cfg(CFG_PATH)
     
-    csv_files = glob(cfg["data"]["folder_path"] + "/*.csv")
+    csv_files = Path(cfg["data"]["folder_path"]).glob("*.csv")
 
     # Write data into deltalake format
     for csv_file in csv_files:
-        file_name = csv_file.split("/")[-1].split(".")[0]
-        df = pd.read_csv(csv_file)
-        if os.path.exists(
-            os.path.join(cfg["data"]["deltalake_folder_path"], file_name)
-        ):
-            shutil.rmtree(
-                os.path.join(cfg["data"]["deltalake_folder_path"], file_name)
-            )
-        write_deltalake(
-            os.path.join(cfg["data"]["deltalake_folder_path"], file_name), df
-        )
-        print(f"Generated the file {file_name} successfully!")
+        file_name = csv_file.stem
+        delta_path = Path(cfg["data"]["deltalake_folder_path"]) / file_name
+        
+        if delta_path.exists():
+            shutil.rmtree(delta_path)
+        
+        try:
+            df = pd.read_csv(csv_file)
+            write_deltalake(str(delta_path), df)
+            print(f"✅ Generated DeltaLake table: {file_name}")
+        except Exception as e:
+            print(f"❌ Failed to process {csv_file}: {e}")

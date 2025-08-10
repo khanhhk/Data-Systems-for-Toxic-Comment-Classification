@@ -4,7 +4,7 @@ from deltalake import DeltaTable
 from helpers import load_cfg
 from pathlib import Path
 import json
-CFG_FILE = "./config/datalake.yaml"
+CFG_FILE = "./configs/config.yaml"
 
 
 def main():

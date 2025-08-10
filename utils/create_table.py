@@ -1,14 +1,15 @@
 import os
-from dotenv import load_dotenv
 from postgresql_client import PostgresSQLClient
-load_dotenv(".env")
+from helpers import load_cfg
+CFG_PATH = "./configs/config.yaml"
+cfg = load_cfg(CFG_PATH)["dw_postgres"]
 
 def main():
 
     pc = PostgresSQLClient(
-        database=os.getenv("POSTGRES_DB"),
-        user=os.getenv("POSTGRES_USER"),
-        password=os.getenv("POSTGRES_PASSWORD"),
+        database=cfg["database"],
+        user=cfg["user"],
+        password=cfg["password"],
     )
 
     create_table_m2 = """
@@ -20,8 +21,9 @@ def main():
 
     create_table_staging = """
         CREATE TABLE IF NOT EXISTS staging.toxic_text(
-            comment_text VARCHAR, 
-            labels INT
+            labels INT,
+            input_ids VARCHAR,
+            attention_mask VARCHAR
         );
     """
     try:

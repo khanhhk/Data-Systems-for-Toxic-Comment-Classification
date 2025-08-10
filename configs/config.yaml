@@ -1,0 +1,22 @@
+data:
+  folder_path: ./data/raw
+  deltalake_folder_path: ./data/deltalake
+
+datalake:
+  endpoint: localhost:9000
+  bucket_name: raw
+  folder_name: deltalake
+  access_key: minio_access_key
+  secret_key: minio_secret_key
+  secure: false
+
+spark:
+  executor_memory: 8g
+
+dw_postgres:
+  host: 127.0.0.1
+  port: 5432
+  database: k6
+  user: k6
+  password: k6
+  staging_schema: staging

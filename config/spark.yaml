@@ -1,2 +1,0 @@
-spark_config:
-  executor_memory: 8g

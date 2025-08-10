@@ -1,24 +1,31 @@
 import sys
 import traceback
 import logging
-from pyspark import SparkContext
 from pyspark.sql import SparkSession
 
-
-def create_spark_session(memory: str, jar_paths: list[str], app_name: str = "Batch Processing Application") -> SparkSession:
+def create_spark_session(
+        memory: str, 
+        jar_paths: list[str], 
+        app_name: str = "Batch Processing Application") -> SparkSession:
     """
-    Create a SparkSession with configurable memory and external jars.
-    
+    Create a configured SparkSession.
+
     Args:
-        memory (str): Executor memory (e.g., "4g")
-        jar_paths (list[str]): List of jar file paths (e.g., ["jars/postgres.jar", "jars/hadoop-aws.jar"])
-        app_name (str): Spark application name
+        memory (str): Executor memory allocation (e.g., "4g").
+        jar_paths (list[str]): List of JAR file paths to include in Spark.
+                               Should contain Postgres driver, Hadoop/S3,
+                               and Delta Lake JARs if needed.
+        app_name (str, optional): Name of the Spark application.
+                                  Defaults to "Batch Processing Application".
 
     Returns:
-        SparkSession
+        SparkSession: Configured Spark session instance.
     """
     try:
-        jars_str = ",".join(jar_paths)
+        logging.info("Initializing Spark session...")
+        jars_str = ",".join(jar_paths) if jar_paths else ""
+        if not jar_paths:
+            logging.warning("No JAR paths provided. External connectors may fail.")
 
         spark = (
             SparkSession.builder
