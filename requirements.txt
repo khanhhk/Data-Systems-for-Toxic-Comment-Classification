@@ -9,4 +9,6 @@ SQLAlchemy==2.0.42
 loguru==0.7.3
 torch==2.5.1
 transformers==4.46.3
-pyspark==4.0.0
+pyspark==3.5.1
+apache-flink==2.1.0
+kafka-python==2.2.15

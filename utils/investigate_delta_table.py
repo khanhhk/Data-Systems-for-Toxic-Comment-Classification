@@ -8,8 +8,7 @@ CFG_FILE = "./configs/config.yaml"
 
 
 def main():
-    cfg = load_cfg(CFG_FILE)
-    data_cfg = cfg["data"]
+    data_cfg = load_cfg(CFG_FILE)["data"]
 
     # Load Delta Lake table
     print("*" * 80)

@@ -12,14 +12,14 @@ def main():
     )
 
     create_table_m2 = """
-        CREATE TABLE IF NOT EXISTS m2.toxic_text( 
+        CREATE TABLE IF NOT EXISTS m2.streaming( 
             comment_text VARCHAR, 
             labels INT
         );
     """
 
     create_table_staging = """
-        CREATE TABLE IF NOT EXISTS staging.toxic_text(
+        CREATE TABLE IF NOT EXISTS staging.streaming(
             labels INT,
             input_ids VARCHAR,
             attention_mask VARCHAR

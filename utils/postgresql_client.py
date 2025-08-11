@@ -36,3 +36,13 @@ class PostgresSQLClient:
         conn = engine.connect()
         df = pd.read_sql(f"select * from {table_name}", conn)
         return df.columns
+
+    def execute_query_params(self, query, params):
+        conn = self.create_conn()
+        cur = conn.cursor()
+        try:
+            cur.execute(query, params)
+            conn.commit()
+        finally:
+            cur.close()
+            conn.close()
