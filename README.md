@@ -2,6 +2,7 @@
 ![](images/Architecture.svg)
 
 # Project Structure
+```txt
 ├── batch_processing                               
 │    ├── main.py
 │    ├── minio_config.py
@@ -41,6 +42,7 @@
 ├── batch-docker-compose.yaml
 ├── requirements.txt
 └── stream-docker-compose.yaml
+```
 
 # Table of contents
 
