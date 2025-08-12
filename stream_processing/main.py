@@ -38,9 +38,9 @@ def main():
 
     t_env.get_config().set(
         "pipeline.jars",
-        f"file://{JARS_PATH}/flink-sql-connector-kafka-4.0.0-2.0.jar;"
-        + f"file://{JARS_PATH}/flink-connector-jdbc-core-4.0.0-2.0.jar;"
-        + f"file://{JARS_PATH}/flink-connector-jdbc-postgres-4.0.0-2.0.jar;"
+        f"file://{JARS_PATH}/flink-sql-connector-kafka-3.2.0-1.18.jar;"
+        + f"file://{JARS_PATH}/flink-json-1.18.0.jar;"
+        + f"file://{JARS_PATH}/flink-connector-jdbc-3.2.0-1.18.jar;"
         + f"file://{JARS_PATH}/postgresql-42.7.7.jar",
     )
     
