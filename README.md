@@ -108,4 +108,55 @@ python utils/streaming_data_to_postgresql.py
 ```
 
 Access the `Control Center` at `http://localhost:9021/` to monitor incoming records.
- 
+
+## 3. Monitoring
+This section demonstrates how to monitor your services locally using ELK Stack, Jaeger, Prometheus, Grafana, and Alertmanager.
+#### 3.1 Elastic Search
+Start the ELK stack with Filebeat using the following command:
+```bash
+cd monitoring/elk
+docker compose -f elk-docker-compose.yml -f extensions/filebeat/filebeat-compose.yml up -d
+```
+You can access Kibana at [http://localhost:5601](http://localhost:5601) to explore logs collected by Filebeat from container output and shipped to Elasticsearch. Credentials for Kibana are defined in `local/elk/.env`.
+
+#### 3.2 Jaeger
+Jaeger helps trace the execution time of specific code blocks across your microservices.
+
+To start Jaeger with Prometheus and Grafana:
+```bash
+cd local
+docker compose -f prom-graf-docker-compose.yaml up -d
+```
+Access Jaeger at [http://localhost:16686](http://localhost:16686).
++ Automatic tracing
+```bash
+cd instrument/traces
+opentelemetry-instrument uvicorn embedding_trace_automatic:app
+```
+
+In the Jaeger UI, traces for instrumented code blocks will be displayed on the right-hand side, allowing you to analyze execution durations and dependencies.
+
++ Manual tracing
+```bash
+cd instrument/traces
+uvicorn embedding_trace_manual:app
+```
+
+#### 3.3 Prometheus
+Prometheus is available at [http://localhost:9090](http://localhost:9090). You can query any available metric via the UI. Click the highlighted dropdown to list all metrics currently being scraped by Prometheus.
+
+#### 3.4 Grafana
+Grafana can be accessed at [http://localhost:3001](http://localhost:3001) with default credentials: `username: admin, password: admin`. You can either create your own dashboards or import community dashboards from Grafana Labs.
+
+For example, the following dashboard (imported from Grafana Labs) visualizes container-level metrics such as CPU usage, memory usage, and memory cache using cAdvisor and Prometheus.
+
+Additionally, you can build custom dashboards to monitor both node-level and application-specific resource usage.
+
+
+#### 3.5 Alertmanager
+While monitoring services and infrastructure, you can define custom alerting rules to notify when resource usage exceeds predefined thresholds. These rules and notification settings are configured in `alertmanager/config.yml`.
+
+In this project, Alertmanager is configured to send alerts to Discord in the following scenarios:
++ When the available memory on a node drops below 5%.
++ When the embedding vector size differs from 768.
++ When the embedding service consumes more than 1.5 GB of RAM.
