@@ -20,7 +20,6 @@ def main():
 
     create_table_staging = """
         CREATE TABLE IF NOT EXISTS staging.streaming(
-            id VARCHAR PRIMARY KEY NOT NULL,
             labels INT,
             input_ids VARCHAR,
             attention_mask VARCHAR

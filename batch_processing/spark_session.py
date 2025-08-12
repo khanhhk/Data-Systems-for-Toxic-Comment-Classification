@@ -3,36 +3,32 @@ import traceback
 import logging
 from pyspark.sql import SparkSession
 
+_PACKAGES = ",".join([
+    # Delta for Spark 3.5.x (Scala 2.12)
+    "io.delta:delta-spark_2.12:3.2.0",
+    # Use Spark’s curated Hadoop/S3A bundle to avoid version drift
+    "org.apache.spark:spark-hadoop-cloud_2.12:3.5.1",
+])
+
 def create_spark_session(
-        memory: str, 
-        jar_paths: list[str], 
-        app_name: str = "Batch Processing Application") -> SparkSession:
-    """
-    Create a configured SparkSession.
-
-    Args:
-        memory (str): Executor memory allocation (e.g., "4g").
-        jar_paths (list[str]): List of JAR file paths to include in Spark.
-                               Should contain Postgres driver, Hadoop/S3,
-                               and Delta Lake JARs if needed.
-        app_name (str, optional): Name of the Spark application.
-                                  Defaults to "Batch Processing Application".
-
-    Returns:
-        SparkSession: Configured Spark session instance.
-    """
+        memory: str,
+        app_name: str = "Batch Processing Application",
+        extra_packages: str = ""
+    ) -> SparkSession:
     try:
         logging.info("Initializing Spark session...")
-        jars_str = ",".join(jar_paths) if jar_paths else ""
-        if not jar_paths:
-            logging.warning("No JAR paths provided. External connectors may fail.")
+
+        packages = _PACKAGES if not extra_packages else f"{_PACKAGES},{extra_packages}"
 
         spark = (
             SparkSession.builder
             .appName(app_name)
             .config("spark.executor.memory", memory)
-            .config("spark.jars", jars_str)
+            .config("spark.driver.memory", memory)
+            .config("spark.jars.packages", packages)
+            # Do NOT force userClassPathFirst; let Spark resolve its own Hadoop set
             .config("spark.sql.execution.arrow.pyspark.enabled", "true")
+            # Delta
             .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
             .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
             .getOrCreate()

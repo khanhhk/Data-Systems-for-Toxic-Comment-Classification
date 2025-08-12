@@ -117,12 +117,7 @@ def list_subfolders(minio_client, bucket, prefix):
     return folders
 
 if __name__ == "__main__":
-    spark = create_spark_session(
-        memory=spark_cfg["executor_memory"],
-        jar_paths=[
-            "jars/hadoop-aws-3.4.1.jar",
-            "jars/bundle-2.24.6.jar"],
-    )
+    spark = create_spark_session(memory=spark_cfg["executor_memory"])
 
     load_minio_config(spark.sparkContext, datalake_cfg)
 

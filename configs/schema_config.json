@@ -1,0 +1,11 @@
+{
+  "source_fields": [
+    { "name": "comment_text", "type": "StringType", "nullable": true },
+    { "name": "labels", "type": "IntegerType", "nullable": true }
+  ],
+  "sink_fields": [
+    { "name": "labels", "type": "IntegerType", "nullable": true },
+    { "name": "input_ids", "type": "JsonType", "nullable": false },
+    { "name": "attention_mask", "type": "JsonType", "nullable": false }
+  ]
+}

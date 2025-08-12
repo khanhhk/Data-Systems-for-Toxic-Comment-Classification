@@ -201,5 +201,4 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-jars/
 artifacts/
