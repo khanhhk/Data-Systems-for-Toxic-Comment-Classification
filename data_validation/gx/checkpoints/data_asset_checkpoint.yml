@@ -20,7 +20,7 @@ evaluation_parameters: {}
 runtime_configuration: {}
 validations:
   - batch_request:
-      datasource_name: my_ds_kafka
+      datasource_name: my_ds_kafka1
       data_asset_name: data_asset
       options:
         path: streaming.csv

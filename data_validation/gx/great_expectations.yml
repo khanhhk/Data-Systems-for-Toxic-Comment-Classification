@@ -135,6 +135,33 @@ fluent_datasources:
         type: csv
         batching_regex: streaming.csv
     base_directory: ../data/kafka
+  my_ds1:
+    type: postgres
+    assets:
+      my_ds1:
+        type: table
+        order_by: []
+        batch_metadata: {}
+        table_name: test_1
+        schema_name: staging
+    connection_string: postgresql+psycopg2://k6:k6@localhost:5432/k6
+  my_ds2:
+    type: postgres
+    assets:
+      my_ds2:
+        type: table
+        order_by: []
+        batch_metadata: {}
+        table_name: test_1
+        schema_name: staging
+    connection_string: postgresql+psycopg2://k6:k6@localhost:5432/k6
+  my_ds_kafka1:
+    type: pandas_filesystem
+    assets:
+      data_asset:
+        type: csv
+        batching_regex: streaming.csv
+    base_directory: ../data/kafka
 notebooks:
 include_rendered_content:
   globally: false

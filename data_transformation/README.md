@@ -25,8 +25,7 @@ dbt deps
 Try running the following commands:
 
 ```bash
-dbt run
-dbt test
+dbt build --target prod
 ```
 
 ### Resources:

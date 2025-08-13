@@ -20,8 +20,8 @@ evaluation_parameters: {}
 runtime_configuration: {}
 validations:
   - batch_request:
-      datasource_name: ds_postgres
-      data_asset_name: postgres_data
+      datasource_name: my_ds2
+      data_asset_name: my_ds2
       options: {}
       batch_slice:
     expectation_suite_name: validate_data

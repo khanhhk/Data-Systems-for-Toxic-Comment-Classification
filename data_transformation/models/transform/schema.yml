@@ -1,11 +1,11 @@
 version: 2
 
 models:
-  - name: table_clean
+  - name: transform_table_clean
     description: "Cleaned dataset test -> {{ target.schema }}.test"
     columns:
       - name: labels
-        data_type: integer
+        data_type: bigint
         tests:
           - not_null
           - dbt_expectations.expect_column_values_to_be_in_set:
