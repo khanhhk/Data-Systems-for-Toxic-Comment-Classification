@@ -63,6 +63,8 @@
 
     3. [Initialize the Database](#23-initialize-the-database)
 
+    4. [Run Stream Processing](#14-run-stream-processing)
+
 ## 1. Batch Processing with PySpark
 ### 1.1 Start Services
 ```shell
@@ -82,7 +84,7 @@ Once completed, access `MinIO` at `http://localhost:9001/` to verify the uploade
 python utils/create_schema.py
 python utils/create_table.py
 ```
-### Run Batch Processing
+### 1.4 Run Batch Processing
 ```shell
 python batch_processing/main.py
 ```
@@ -108,6 +110,11 @@ python utils/streaming_data_to_postgresql.py
 ```
 
 Access the `Control Center` at `http://localhost:9021/` to monitor incoming records.
+
+### 2.4 Run Stream Processing
+```shell
+python stream_processing/main.py
+```
 
 ## 3. Monitoring
 This section demonstrates how to monitor your services locally using ELK Stack, Jaeger, Prometheus, Grafana, and Alertmanager.

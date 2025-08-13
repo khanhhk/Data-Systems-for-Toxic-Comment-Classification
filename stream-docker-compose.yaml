@@ -28,10 +28,10 @@ services:
       - "9101:9101"
     healthcheck:
       test: nc -z localhost 29092 || exit 1
-      start_period: 15s
+      start_period: 30s
       interval: 5s
       timeout: 10s
-      retries: 10
+      retries: 20
     environment:
       # ID of the broker in a cluster
       KAFKA_BROKER_ID: 1
@@ -64,7 +64,7 @@ services:
     ports:
       - "8081:8081"
     healthcheck:
-      start_period: 10s
+      start_period: 30s
       interval: 10s
       retries: 20
       test: curl --user superUser:superUser --fail --silent --insecure http://localhost:8081/subjects --output /dev/null || exit 1

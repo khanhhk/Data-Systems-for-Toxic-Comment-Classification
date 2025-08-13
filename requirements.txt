@@ -13,3 +13,5 @@ pyspark==3.5.1
 apache-flink==1.18.0
 kafka-python==2.2.15
 great_expectations==0.17.21
+dbt-core==1.6.5
+dbt-postgres==1.6.5
