@@ -13,5 +13,3 @@ stages:
     - dvc/dataloader.py
     - dvc/model.py
     - dvc/train.py
-    outs:
-    - model_checkpoints

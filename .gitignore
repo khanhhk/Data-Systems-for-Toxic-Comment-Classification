@@ -203,3 +203,4 @@ __marimo__/
 
 artifacts/
 /model_checkpoints
+mlruns/

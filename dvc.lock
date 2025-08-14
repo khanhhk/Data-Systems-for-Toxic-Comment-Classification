@@ -33,11 +33,5 @@ stages:
       size: 650
     - path: dvc/train.py
       hash: md5
-      md5: 5cc7448a4ebaa97a8c2dcc629221b943
-      size: 2879
-    outs:
-    - path: model_checkpoints
-      hash: md5
-      md5: f8daa177a6f16071dc1a47b21d01d15f.dir
-      size: 274953242
-      nfiles: 1
+      md5: 94d49026fd79385f5b8c394427c1459e
+      size: 3654

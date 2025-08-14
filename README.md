@@ -157,7 +157,6 @@ dvc stage add -n train_model \
   -d dvc/model.py \
   -d dvc/config.py \
   -d data/production/cleaned_data.csv \
-  -o model_checkpoints \
   python dvc/train.py
 ```
 
