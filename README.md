@@ -136,6 +136,14 @@ git commit -m "Initialize DVC"
 ```
 
 ```bash
+dvc remote add -d minio_remote s3://raw/dvc
+dvc remote modify minio_remote endpointurl http://localhost:9000
+dvc remote modify minio_remote access_key_id minio_access_key
+dvc remote modify minio_remote secret_access_key minio_secret_key
+dvc remote modify minio_remote use_ssl false
+```
+
+```bash
 dvc stage add -n extract_data \
   -d dvc/extract_data.py \
   -o data/production/cleaned_data.csv \
@@ -149,16 +157,16 @@ dvc stage add -n train_model \
   -d dvc/model.py \
   -d dvc/config.py \
   -d data/production/cleaned_data.csv \
-  -o model/checkpoints \
+  -o model_checkpoints \
   python dvc/train.py
 ```
 
 ```bash
 dvc repro
-dvc remote add -d gdrive_remote gdrive://1P3X-vSlDfDzW0bBN_L3DNt_p3pW4GcFU
-
-git add dvc.yaml dvc.lock
-git commit -m "Add DVC pipeline: extract & train stages"
+git add dvc.yaml dvc.lock .dvc/config .gitignore
+git commit -m "Add DVC pipeline"
+dvc push
+git push origin dev
 ```
 
 ## 3. Monitoring
