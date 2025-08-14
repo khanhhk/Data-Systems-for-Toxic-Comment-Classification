@@ -4,7 +4,7 @@ class Config:
     MAX_LENGTH = 512
     EVAL_SIZE = 0.3
     TRAIN_EPOCHS = 1
-    MODEL_FOLDER = "./model/checkpoints"
+    MODEL_FOLDER = "./model_checkpoints"
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
     TOXIC_THRESHOLD = 0.45
     MODEL_NAME = "distilbert-base-uncased"
