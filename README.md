@@ -131,8 +131,34 @@ dbt build --target prod
 ### 3.3 Data Version Control (DVC)
 ```bash
 dvc init
+git add .dvc .gitignore
 git commit -m "Initialize DVC"
-dbt build --target prod
+```
+
+```bash
+dvc stage add -n extract_data \
+  -d dvc/extract_data.py \
+  -o data/production/cleaned_data.csv \
+  python dvc/extract_data.py
+```
+
+```bash
+dvc stage add -n train_model \
+  -d dvc/train.py \
+  -d dvc/dataloader.py \
+  -d dvc/model.py \
+  -d dvc/config.py \
+  -d data/production/cleaned_data.csv \
+  -o model/checkpoints \
+  python dvc/train.py
+```
+
+```bash
+dvc repro
+dvc remote add -d gdrive_remote gdrive://1P3X-vSlDfDzW0bBN_L3DNt_p3pW4GcFU
+
+git add dvc.yaml dvc.lock
+git commit -m "Add DVC pipeline: extract & train stages"
 ```
 
 ## 3. Monitoring

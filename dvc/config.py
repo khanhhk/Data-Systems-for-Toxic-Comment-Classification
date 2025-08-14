@@ -3,7 +3,7 @@ class Config:
     BATCH_SIZE = 64
     MAX_LENGTH = 512
     EVAL_SIZE = 0.3
-    TRAIN_EPOCHS = 2
+    TRAIN_EPOCHS = 1
     MODEL_FOLDER = "./model/checkpoints"
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
     TOXIC_THRESHOLD = 0.45
