@@ -1,0 +1,43 @@
+schema: '2.0'
+stages:
+  extract_data:
+    cmd: python dvc/extract_data.py
+    deps:
+    - path: dvc/extract_data.py
+      hash: md5
+      md5: 0e886914187491203b5254f2265abf0a
+      size: 895
+    outs:
+    - path: data/production/cleaned_data.csv
+      hash: md5
+      md5: ede70ea9d8a7223eb10dd55beea5efc3
+      size: 8091670
+  train_model:
+    cmd: python dvc/train.py
+    deps:
+    - path: data/production/cleaned_data.csv
+      hash: md5
+      md5: ede70ea9d8a7223eb10dd55beea5efc3
+      size: 8091670
+    - path: dvc/config.py
+      hash: md5
+      md5: daff9d9ecfd3fe33a5f6702f378b1d94
+      size: 332
+    - path: dvc/dataloader.py
+      hash: md5
+      md5: 47b45eff4edbddfda01c4f3e31faf47f
+      size: 918
+    - path: dvc/model.py
+      hash: md5
+      md5: 065aad7f8cb006ed9af921bb13c75e20
+      size: 650
+    - path: dvc/train.py
+      hash: md5
+      md5: 5cc7448a4ebaa97a8c2dcc629221b943
+      size: 2879
+    outs:
+    - path: model_checkpoints
+      hash: md5
+      md5: f8daa177a6f16071dc1a47b21d01d15f.dir
+      size: 274953242
+      nfiles: 1

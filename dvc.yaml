@@ -1,0 +1,17 @@
+stages:
+  extract_data:
+    cmd: python dvc/extract_data.py
+    deps:
+    - dvc/extract_data.py
+    outs:
+    - data/production/cleaned_data.csv
+  train_model:
+    cmd: python dvc/train.py
+    deps:
+    - data/production/cleaned_data.csv
+    - dvc/config.py
+    - dvc/dataloader.py
+    - dvc/model.py
+    - dvc/train.py
+    outs:
+    - model_checkpoints
