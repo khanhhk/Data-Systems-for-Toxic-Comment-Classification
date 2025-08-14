@@ -1,7 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from model.config import Config
+from dvc.config import Config
 import json
 from loguru import logger
 from pyflink.table import (

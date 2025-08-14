@@ -116,6 +116,25 @@ Access the `Control Center` at `http://localhost:9021/` to monitor incoming reco
 python stream_processing/main.py
 ```
 
+### 3.1 Data validation with Great Expectations
+You can find examples of data validation using Great Expectations in the `notebooks` folder `full_flow.ipynb` and `reload_and_validate.ipynb`.
+
+Great Expectations is a Python-based library that allows you to define, manage, and validate expectations about data in your data pipelines and projects.
+
+### 3.2 Data transformation with dbt
+```bash
+dbt clean
+dbt deps
+dbt build --target prod
+```
+
+### 3.3 Data Version Control (DVC)
+```bash
+dvc init
+git commit -m "Initialize DVC"
+dbt build --target prod
+```
+
 ## 3. Monitoring
 This section demonstrates how to monitor your services locally using ELK Stack, Jaeger, Prometheus, Grafana, and Alertmanager.
 #### 3.1 Elastic Search
