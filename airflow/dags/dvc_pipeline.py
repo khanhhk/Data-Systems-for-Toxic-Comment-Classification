@@ -20,7 +20,7 @@ with DAG(
 
     run_dvc_repro = BashOperator(
     task_id="run_dvc_repro",
-    bash_command="cd /opt/project && dvc repro",
+    bash_command="export PATH=$HOME/.local/bin:$PATH && cd /opt/project && dvc repro",
     env={
         "MODEL_FOLDER": "/opt/project/model_checkpoints",
         "DATA_FILE": "/opt/project/data/production/cleaned_data.csv"
@@ -29,7 +29,7 @@ with DAG(
 
     push_dvc_to_remote = BashOperator(
         task_id="push_dvc_to_remote",
-        bash_command="cd /opt/project && dvc push",
+        bash_command="export PATH=$HOME/.local/bin:$PATH && cd /opt/project && dvc push",
         env={
         "MODEL_FOLDER": "/opt/project/model_checkpoints",
         "DATA_FILE": "/opt/project/data/production/cleaned_data.csv"

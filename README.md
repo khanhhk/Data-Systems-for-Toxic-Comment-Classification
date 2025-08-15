@@ -179,24 +179,24 @@ dvc remote modify minio_remote use_ssl false
 
 ```bash
 dvc stage add -n extract_data \
-  -d dvc/extract_data.py \
+  -d data_version_control/extract_data.py \
   -o data/production/cleaned_data.csv \
-  python dvc/extract_data.py
+  python data_version_control/extract_data.py
 ```
 
 ```bash
 dvc stage add -n train_model \
-  -d dvc/train.py \
-  -d dvc/dataloader.py \
-  -d dvc/model.py \
-  -d dvc/config.py \
+  -d data_version_control/train.py \
+  -d data_version_control/dataloader.py \
+  -d data_version_control/model.py \
+  -d data_version_control/config.py \
   -d data/production/cleaned_data.csv \
-  python dvc/train.py
+  python data_version_control/train.py
 ```
 
 ```bash
 dvc repro
-git add dvc.yaml dvc.lock .dvc/config .gitignore
+git add dvc.yaml dvc.lock .dvc/config
 git commit -m "Add DVC pipeline"
 dvc push
 git push origin dev

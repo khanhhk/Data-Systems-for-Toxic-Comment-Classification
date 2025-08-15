@@ -13,3 +13,4 @@ RUN pip install git+https://github.com/mpgreg/airflow-provider-great-expectation
 # Requirement for running Docker Operator
 COPY ./requirements.txt /requirements.txt
 RUN pip install --user -r /requirements.txt
+ENV PATH="/home/airflow/.local/bin:$PATH"
