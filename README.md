@@ -123,6 +123,8 @@ python utils/create_table.py
 python batch_processing/main.py
 ```
 
+![](gifs/1.gif)
+
 ## 2. Stream Processing with Apache Flink
 ### 2.1 Start Services
 ```shell
@@ -150,23 +152,28 @@ Access the `Control Center` at `http://localhost:9021/` to monitor incoming reco
 python stream_processing/main.py
 ```
 
+![](gifs/2.gif)
+
 ### 3.1 Data validation with Great Expectations
 You can find examples of data validation using Great Expectations in the `notebooks` folder `full_flow.ipynb` and `reload_and_validate.ipynb`.
 
 Great Expectations is a Python-based library that allows you to define, manage, and validate expectations about data in your data pipelines and projects.
 
+![](gifs/3.gif)
+
 ### 3.2 Data transformation with dbt
 ```bash
+cd data_transformation/
 dbt clean
 dbt deps
 dbt build --target prod
 ```
 
+![](gifs/4.gif)
+
 ### 3.3 Data Version Control (DVC)
 ```bash
 dvc init
-git add .dvc .gitignore
-git commit -m "Initialize DVC"
 ```
 
 ```bash
@@ -196,11 +203,12 @@ dvc stage add -n train_model \
 
 ```bash
 dvc repro
-git add dvc.yaml dvc.lock .dvc/config
-git commit -m "Add DVC pipeline"
-dvc push
-git push origin dev
 ```
+
+![](gifs/5.gif)
+
+![](images/1.png)
+
 ### 3.4 Airflow
 Start the docker compose for Airflow:
 ```shell
