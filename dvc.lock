@@ -33,5 +33,5 @@ stages:
       size: 650
     - path: dvc/train.py
       hash: md5
-      md5: 94d49026fd79385f5b8c394427c1459e
-      size: 3654
+      md5: 99a1bedc40e83d04e734f0b115b58a2d
+      size: 3587

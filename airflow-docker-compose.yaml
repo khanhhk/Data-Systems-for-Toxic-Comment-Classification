@@ -58,15 +58,15 @@ x-airflow-common: &airflow-common
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
+    TRANSFORMERS_CACHE: ${TRANSFORMERS_CACHE}
+    HF_HOME: ${HF_HOME}
+    MLFLOW_ARTIFACT_URI: file:/opt/project/mlruns
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
-    - ${AIRFLOW_PROJ_DIR:-.}/configs:/opt/airflow/configs
-    - ${AIRFLOW_PROJ_DIR:-.}/include:/opt/airflow/include
-    - ${AIRFLOW_PROJ_DIR:-.}/data:/opt/airflow/data
-    - ${AIRFLOW_PROJ_DIR:-.}/utils:/opt/airflow/utils
-    - ${AIRFLOW_PROJ_DIR:-.}/jars:/opt/airflow/jars
-    - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
+    - ./:/opt/project
+    - ./hf_cache:${TRANSFORMERS_CACHE}
+    - ./mlruns:/opt/project/mlruns 
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on

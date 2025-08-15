@@ -1,10 +1,9 @@
 import os
 import torch
 from torch import nn, optim
-from sklearn.metrics import classification_report, roc_auc_score
+from sklearn.metrics import roc_auc_score
 from loguru import logger
 import mlflow
-import mlflow.pytorch
 
 from config import Config
 from dataloader import val_dataloader, train_dataloader
@@ -92,5 +91,7 @@ with mlflow.start_run():
         logger.info(f"[Epoch {epoch+1}] Checkpoint saved: {model_path}")
 
     # Save and register final model
-    mlflow.pytorch.log_model(classifier, artifact_path="model", registered_model_name="bert-toxic-classifier")
+    mlflow.pytorch.log_model(
+        classifier, 
+        registered_model_name="bert-toxic-classifier")
     logger.info("Model registered in MLflow as 'bert-toxic-classifier'")

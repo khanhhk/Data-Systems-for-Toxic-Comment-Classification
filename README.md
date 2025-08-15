@@ -3,30 +3,58 @@
 
 # Project Structure
 ```txt
+├── .dvc
+│    ├── .gitignore
+│    └──  config
+├── airflow                               
+│    ├── dags
+│    ├── Dockerfile
+│    └── requirements
 ├── batch_processing                               
 │    ├── main.py
 │    ├── minio_config.py
-│    └──  spark_session.py    
+│    └── spark_session.py    
 ├── configs                              
 │    └──  config.yaml              
 ├── data                               
-│    ├── deltalake                                      
+│    ├── deltalake
+│    ├── kafka                                  
 │    └── raw
+├── data_transformation                             
+│    ├── analyses
+│    ├── macros
+│    ├── models
+│    ├── seeds
+│    ├── snapshots
+│    ├── .gitignore
+│    ├── .user.yml
+│    ├── dbt_project.yml
+│    ├── packages.yml                        
+│    └── profiles.yml
+├── data_validation                            
+│    ├── gx
+│    ├── full_flow.ipynb                                 
+│    └── reload_and_validate.ipynb
 ├── debezium
 │    ├── configs        
-│    └── run.sh
-├── images                            
-├── model                              
+│    └── run.sh                  
+├── dvc                              
 │    ├── config.py                                      
-│    ├── dataloader.py                             
-│    ├── model.py                
-│    └── train.py                    
-├── stream_processing                             
-│    ├── kafka_connect                       
-│    ├── kafka_producer                
-│    ├── datastream_api.py                  
-│    ├── run.sh                 
-│    └── table_api.py              
+│    ├── dataloader.py
+│    ├── extract_data.py                          
+│    ├── model.py
+│    ├── requirements.txt           
+│    └── train.py
+├── images
+├── jars
+├── monitoring                             
+│    ├── alertmanager        
+│    ├── elk
+│    ├── grafana            
+│    ├── prometheus              
+│    └── prom-graf-docker-compose.yaml         
+├── stream_processing                                          
+│    └── main.py              
 ├── trino
 │    ├── catalog
 │    └── etc
@@ -39,7 +67,13 @@
 │    ├── streaming_data_to_postgresql.py
 │    ├── upload_data_to_datalake.py
 │    └── write_delta_table.py
+├── .dvcignore
+├── .env
+├── .gitignore
+├── airflow-docker-compose.yaml
 ├── batch-docker-compose.yaml
+├── dvc.lock
+├── dvc.yaml
 ├── requirements.txt
 └── stream-docker-compose.yaml
 ```
@@ -166,6 +200,11 @@ git add dvc.yaml dvc.lock .dvc/config .gitignore
 git commit -m "Add DVC pipeline"
 dvc push
 git push origin dev
+```
+### 3.4 Airflow
+Start the docker compose for Airflow:
+```shell
+docker compose -f airflow-docker-compose.yaml up -d
 ```
 
 ## 4. Monitoring
