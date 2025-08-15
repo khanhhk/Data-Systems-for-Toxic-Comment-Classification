@@ -3,7 +3,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from minio import Minio
 from loguru import logger
-from dvc.config import Config
+from data_version_control.config import Config
 from transformers import AutoTokenizer
 from utils.helpers import load_cfg
 from spark_session import create_spark_session

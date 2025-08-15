@@ -13,19 +13,27 @@ with DAG(
     default_args=default_args,
     description="Run DVC pipeline and push data to MinIO",
     start_date=datetime(2025, 8, 15),
-    schedule_interval=None,  # hoặc "0 2 * * *" để chạy hàng ngày
+    schedule_interval=None,
     catchup=False,
     tags=["ml", "dvc", "minio", "mlflow"],
 ) as dag:
 
     run_dvc_repro = BashOperator(
-        task_id="run_dvc_repro",
-        bash_command="cd /opt/project && dvc repro"
-    )
+    task_id="run_dvc_repro",
+    bash_command="cd /opt/project && dvc repro",
+    env={
+        "MODEL_FOLDER": "/opt/project/model_checkpoints",
+        "DATA_FILE": "/opt/project/data/production/cleaned_data.csv"
+    }
+)
 
     push_dvc_to_remote = BashOperator(
         task_id="push_dvc_to_remote",
-        bash_command="cd /opt/project && dvc repro"
+        bash_command="cd /opt/project && dvc push",
+        env={
+        "MODEL_FOLDER": "/opt/project/model_checkpoints",
+        "DATA_FILE": "/opt/project/data/production/cleaned_data.csv"
+    }
     )
 
     run_dvc_repro >> push_dvc_to_remote

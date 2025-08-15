@@ -84,8 +84,8 @@ with mlflow.start_run():
         logger.info(f"[Epoch {epoch+1}] Validation AUC: {auc:.4f}")
 
         # Save checkpoint
-        os.makedirs(Config.MODEL_FOLDER, exist_ok=True)
-        model_path = os.path.join(Config.MODEL_FOLDER, f"checkpoint_epoch{epoch+1}.pt")
+        os.makedirs(str(Config.MODEL_FOLDER), exist_ok=True)
+        model_path = str(Config.MODEL_FOLDER / f"checkpoint_epoch{epoch+1}.pt")
         torch.save(classifier.state_dict(), model_path)
         mlflow.log_artifact(model_path, artifact_path="checkpoints")
         logger.info(f"[Epoch {epoch+1}] Checkpoint saved: {model_path}")
