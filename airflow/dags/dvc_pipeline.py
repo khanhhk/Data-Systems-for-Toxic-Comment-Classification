@@ -19,21 +19,24 @@ with DAG(
 ) as dag:
 
     run_dvc_repro = BashOperator(
-    task_id="run_dvc_repro",
-    bash_command="export PATH=$HOME/.local/bin:$PATH && cd /opt/project && dvc repro",
-    env={
-        "MODEL_FOLDER": "/opt/project/model_checkpoints",
-        "DATA_FILE": "/opt/project/data/production/cleaned_data.csv"
-    }
-)
+        task_id="run_dvc_repro",
+        bash_command="""
+            export PATH=$HOME/.local/bin:$PATH
+            cd /opt/project
+            echo "🔁 Running DVC repro..."
+            which dvc
+            dvc repro
+        """
+    )
 
     push_dvc_to_remote = BashOperator(
         task_id="push_dvc_to_remote",
-        bash_command="export PATH=$HOME/.local/bin:$PATH && cd /opt/project && dvc push",
-        env={
-        "MODEL_FOLDER": "/opt/project/model_checkpoints",
-        "DATA_FILE": "/opt/project/data/production/cleaned_data.csv"
-    }
+        bash_command="""
+            export PATH=$HOME/.local/bin:$PATH
+            cd /opt/project
+            echo "☁️ Pushing DVC outputs to MinIO remote..."
+            dvc push
+        """
     )
 
     run_dvc_repro >> push_dvc_to_remote

@@ -9,10 +9,11 @@
 ├── airflow                               
 │    ├── dags
 │    ├── Dockerfile
-│    └── requirements
+│    └── requirements.txt
 ├── batch_processing                               
 │    ├── main.py
 │    ├── minio_config.py
+│    ├── requirements.txt
 │    └── spark_session.py    
 ├── configs                              
 │    └──  config.yaml              
@@ -53,8 +54,9 @@
 │    ├── grafana            
 │    ├── prometheus              
 │    └── prom-graf-docker-compose.yaml         
-├── stream_processing                                          
-│    └── main.py              
+├── stream_processing
+│    ├── main.py                                        
+│    └── requirements.txt            
 ├── trino
 │    ├── catalog
 │    └── etc
@@ -97,7 +99,31 @@
 
     3. [Initialize the Database](#23-initialize-the-database)
 
-    4. [Run Stream Processing](#14-run-stream-processing)
+    4. [Run Stream Processing](#24-run-stream-processing)
+
+3. [Data Quality and Transformation](#3-data-quality-and-transformation)
+
+    1. [Data Validation with Great Expectations](#31-data-validation-with-great-expectations)
+
+    2. [Data Transformation with dbt](#32-data-transformation-with-dbt)
+
+4. [Machine Learning Workflow with DVC](#4-machine-learning-workflow-with-dvc)
+
+    1. [Initialize DVC and Remote](#41-initialize-dvc-and-remote)
+
+    2. [Define and Run Pipeline Stages](#42-define-and-run-pipeline-stages)
+
+5. [Workflow Orchestration with Airflow](#5-workflow-orchestration-with-airflow)
+
+6. [Monitoring Stack](#6-monitoring-stack)
+
+    1. [ELK Stack](#61-elk-stack)
+
+    2. [Prometheus](#62-prometheus)
+
+    3. [Grafana](#63-grafana)
+
+    4. [Alertmanager](#64-alertmanager)
 
 ## 1. Batch Processing with PySpark
 ### 1.1 Start Services
@@ -105,13 +131,13 @@
 docker compose -f batch-docker-compose.yaml up -d
 ```
 ### 1.2 Push Data to MinIO
-Run the following commands in sequence:
+Execute the following scripts in order:
 ```shell
 python utils/write_delta_table.py
 python utils/upload_data_to_datalake.py
 python utils/investigate_delta_table.py
 ```
-Once completed, access `MinIO` at `http://localhost:9001/` to verify the uploaded data.
+Access `MinIO` at `http://localhost:9001/` to verify the uploaded data.
 
 ### 1.3 Create Data Schema and Tables
 ```shell
@@ -138,7 +164,6 @@ bash run.sh register_connector configs/postgresql-cdc.json
 ```
 Access Debezium UI at `http://localhost:8085/`.
 
-
 ### 2.3 Initialize the Database
 Periodically insert new records into the target table:
 ```shell
@@ -154,14 +179,17 @@ python stream_processing/main.py
 
 ![](gifs/2.gif)
 
-### 3.1 Data validation with Great Expectations
-You can find examples of data validation using Great Expectations in the `notebooks` folder `full_flow.ipynb` and `reload_and_validate.ipynb`.
+## 3. Data Quality and Transformation
+### 3.1 Data Validation with Great Expectations
+Refer to the following notebooks for full examples:
+- `data_validation/full_flow.ipynb`
+- `data_validation/reload_and_validate.ipynb`
 
-Great Expectations is a Python-based library that allows you to define, manage, and validate expectations about data in your data pipelines and projects.
+Great Expectations allows definition and enforcement of data quality expectations in your data pipeline.
 
 ![](gifs/3.gif)
 
-### 3.2 Data transformation with dbt
+### 3.2 Data Transformation with dbt
 ```bash
 cd data_transformation/
 dbt clean
@@ -171,7 +199,8 @@ dbt build --target prod
 
 ![](gifs/4.gif)
 
-### 3.3 Data Version Control (DVC)
+## 4. Machine Learning Workflow with DVC
+### 4.1 Initialize DVC and Remote
 ```bash
 dvc init
 ```
@@ -184,6 +213,7 @@ dvc remote modify minio_remote secret_access_key minio_secret_key
 dvc remote modify minio_remote use_ssl false
 ```
 
+### 4.2 Define and Run Pipeline Stages
 ```bash
 dvc stage add -n extract_data \
   -d data_version_control/extract_data.py \
@@ -209,15 +239,20 @@ dvc repro
 
 ![](images/1.png)
 
-### 3.4 Airflow
-Start the docker compose for Airflow:
+
+## 5. Workflow Orchestration with Airflow
+Start Airflow:
 ```shell
 docker compose -f airflow-docker-compose.yaml up -d
 ```
+Important: Update DVC remote for container compatibility:
+```shell
+dvc remote modify minio_remote endpointurl http://minio:9000
+```
 
-## 4. Monitoring
-This section demonstrates how to monitor your services locally using ELK Stack, Jaeger, Prometheus, Grafana, and Alertmanager.
-#### 4.1 Elastic Search
+## 6. Monitoring Stack
+This section demonstrates how to monitor your services locally using ELK Stack, Prometheus, Grafana, and Alertmanager.
+### 6.1 Elastic Search
 Start the ELK stack with Filebeat using the following command:
 ```bash
 cd monitoring/elk
@@ -225,33 +260,10 @@ docker compose -f elk-docker-compose.yml -f extensions/filebeat/filebeat-compose
 ```
 You can access Kibana at [http://localhost:5601](http://localhost:5601) to explore logs collected by Filebeat from container output and shipped to Elasticsearch. Credentials for Kibana are defined in `local/elk/.env`.
 
-#### 4.2 Jaeger
-Jaeger helps trace the execution time of specific code blocks across your microservices.
-
-To start Jaeger with Prometheus and Grafana:
-```bash
-cd local
-docker compose -f prom-graf-docker-compose.yaml up -d
-```
-Access Jaeger at [http://localhost:16686](http://localhost:16686).
-+ Automatic tracing
-```bash
-cd instrument/traces
-opentelemetry-instrument uvicorn embedding_trace_automatic:app
-```
-
-In the Jaeger UI, traces for instrumented code blocks will be displayed on the right-hand side, allowing you to analyze execution durations and dependencies.
-
-+ Manual tracing
-```bash
-cd instrument/traces
-uvicorn embedding_trace_manual:app
-```
-
-#### 4.3 Prometheus
+### 6.2 Prometheus
 Prometheus is available at [http://localhost:9090](http://localhost:9090). You can query any available metric via the UI. Click the highlighted dropdown to list all metrics currently being scraped by Prometheus.
 
-#### 4.4 Grafana
+### 6.3 Grafana
 Grafana can be accessed at [http://localhost:3001](http://localhost:3001) with default credentials: `username: admin, password: admin`. You can either create your own dashboards or import community dashboards from Grafana Labs.
 
 For example, the following dashboard (imported from Grafana Labs) visualizes container-level metrics such as CPU usage, memory usage, and memory cache using cAdvisor and Prometheus.
@@ -259,7 +271,7 @@ For example, the following dashboard (imported from Grafana Labs) visualizes con
 Additionally, you can build custom dashboards to monitor both node-level and application-specific resource usage.
 
 
-#### 4.5 Alertmanager
+### 6.4 Alertmanager
 While monitoring services and infrastructure, you can define custom alerting rules to notify when resource usage exceeds predefined thresholds. These rules and notification settings are configured in `alertmanager/config.yml`.
 
 In this project, Alertmanager is configured to send alerts to Discord in the following scenarios:

@@ -15,6 +15,7 @@ spark:
 
 dw_postgres:
   host: 127.0.0.1
+  host_docker: dw-postgresql
   port: 5432
   database: k6
   user: k6

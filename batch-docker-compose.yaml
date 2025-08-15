@@ -97,3 +97,8 @@ services:
 volumes:
   minio_storage:
   dw_postgres_data:
+
+networks:
+  default:
+    name: shared-network
+    external: true
