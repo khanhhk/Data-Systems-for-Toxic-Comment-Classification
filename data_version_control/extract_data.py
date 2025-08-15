@@ -22,7 +22,7 @@ def extract_and_save_data():
     df = pd.read_sql(query, conn)
     conn.close()
 
-    os.makedirs("./data/production", exist_ok=False)
+    os.makedirs("./data/production", exist_ok=True)
     df.to_csv("data/production/cleaned_data.csv", index=False)
     print("✅ Data exported to data/production/cleaned_data.csv")
 

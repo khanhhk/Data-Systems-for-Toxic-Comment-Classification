@@ -12,7 +12,7 @@ def parse_json_columns(example):
     example["attention_mask"] = json.loads(example["attention_mask"])
     return example
 
-dataset = load_dataset("csv", data_files=Config.DATA_FILE)['train']
+dataset = load_dataset("csv", data_files=str(Config.DATA_FILE))["train"]
 dataset = dataset.train_test_split(test_size=Config.EVAL_SIZE, seed=0)
 dataset = dataset.map(parse_json_columns)
 
