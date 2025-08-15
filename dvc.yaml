@@ -1,0 +1,15 @@
+stages:
+  extract_data:
+    cmd: python data_version_control/extract_data.py
+    deps:
+    - data_version_control/extract_data.py
+    outs:
+    - data/production/cleaned_data.csv
+  train_model:
+    cmd: python data_version_control/train.py
+    deps:
+    - data/production/cleaned_data.csv
+    - data_version_control/config.py
+    - data_version_control/dataloader.py
+    - data_version_control/model.py
+    - data_version_control/train.py

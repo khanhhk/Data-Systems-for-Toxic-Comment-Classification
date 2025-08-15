@@ -1,0 +1,37 @@
+schema: '2.0'
+stages:
+  extract_data:
+    cmd: python data_version_control/extract_data.py
+    deps:
+    - path: data_version_control/extract_data.py
+      hash: md5
+      md5: e6203363e35ee449c049e12750fe4338
+      size: 894
+    outs:
+    - path: data/production/cleaned_data.csv
+      hash: md5
+      md5: ede70ea9d8a7223eb10dd55beea5efc3
+      size: 8091670
+  train_model:
+    cmd: python data_version_control/train.py
+    deps:
+    - path: data/production/cleaned_data.csv
+      hash: md5
+      md5: ede70ea9d8a7223eb10dd55beea5efc3
+      size: 8091670
+    - path: data_version_control/config.py
+      hash: md5
+      md5: 3e7a73c50c11065d129f49870629ce59
+      size: 498
+    - path: data_version_control/dataloader.py
+      hash: md5
+      md5: 27c719653c886456f7e88d6b67172c58
+      size: 923
+    - path: data_version_control/model.py
+      hash: md5
+      md5: 065aad7f8cb006ed9af921bb13c75e20
+      size: 650
+    - path: data_version_control/train.py
+      hash: md5
+      md5: c84b8eea536ab164243e8e1cdf791b93
+      size: 3601
