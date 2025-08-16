@@ -28,6 +28,7 @@
 │    ├── models
 │    ├── seeds
 │    ├── snapshots
+│    ├── tests
 │    ├── .gitignore
 │    ├── .user.yml
 │    ├── dbt_project.yml
@@ -252,6 +253,8 @@ Important: Update DVC remote for container compatibility:
 ```shell
 dvc remote modify minio_remote endpointurl http://minio:9000
 ```
+
+![](images/3.png)
 
 ## 6. Monitoring Stack
 This section demonstrates how to monitor your services locally using ELK Stack, Prometheus, Grafana, and Alertmanager.
