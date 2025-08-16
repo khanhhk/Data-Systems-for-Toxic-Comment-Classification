@@ -20,8 +20,8 @@ evaluation_parameters: {}
 runtime_configuration: {}
 validations:
   - batch_request:
-      datasource_name: my_ds2
-      data_asset_name: my_ds2
+      datasource_name: my_ds3
+      data_asset_name: my_ds3
       options: {}
       batch_slice:
     expectation_suite_name: validate_data

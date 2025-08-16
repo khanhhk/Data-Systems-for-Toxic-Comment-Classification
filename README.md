@@ -8,6 +8,7 @@
 │    └──  config
 ├── airflow                               
 │    ├── dags
+│    ├── logs
 │    ├── Dockerfile
 │    └── requirements.txt
 ├── batch_processing                               
@@ -36,16 +37,17 @@
 │    ├── gx
 │    ├── full_flow.ipynb                                 
 │    └── reload_and_validate.ipynb
-├── debezium
-│    ├── configs        
-│    └── run.sh                  
-├── dvc                              
+├── data_version_control                             
 │    ├── config.py                                      
 │    ├── dataloader.py
 │    ├── extract_data.py                          
 │    ├── model.py
 │    ├── requirements.txt           
 │    └── train.py
+├── debezium
+│    ├── configs        
+│    └── run.sh                  
+├── gifs
 ├── images
 ├── jars
 ├── monitoring                             
@@ -239,6 +241,7 @@ dvc repro
 
 ![](images/1.png)
 
+![](images/2.png)
 
 ## 5. Workflow Orchestration with Airflow
 Start Airflow:
@@ -255,26 +258,38 @@ This section demonstrates how to monitor your services locally using ELK Stack, 
 ### 6.1 Elastic Search
 Start the ELK stack with Filebeat using the following command:
 ```bash
-cd monitoring/elk
+cd monitoring/elk/
 docker compose -f elk-docker-compose.yml -f extensions/filebeat/filebeat-compose.yml up -d
 ```
-You can access Kibana at [http://localhost:5601](http://localhost:5601) to explore logs collected by Filebeat from container output and shipped to Elasticsearch. Credentials for Kibana are defined in `local/elk/.env`.
+You can access Kibana at [http://localhost:5601](http://localhost:5601) to explore logs collected by Filebeat from container output and shipped to Elasticsearch. Credentials for Kibana are defined in `monitoring/elk/.env`.
+
+![](gifs/6.gif)
 
 ### 6.2 Prometheus
-Prometheus is available at [http://localhost:9090](http://localhost:9090). You can query any available metric via the UI. Click the highlighted dropdown to list all metrics currently being scraped by Prometheus.
+To start Prometheus and Grafana:
+```bash
+cd monitoring/
+docker compose -f prom-graf-docker-compose.yaml up -d
+```
+Prometheus is available at [http://localhost:9090](http://localhost:9090).
 
 ### 6.3 Grafana
 Grafana can be accessed at [http://localhost:3001](http://localhost:3001) with default credentials: `username: admin, password: admin`. You can either create your own dashboards or import community dashboards from Grafana Labs.
 
 For example, the following dashboard (imported from Grafana Labs) visualizes container-level metrics such as CPU usage, memory usage, and memory cache using cAdvisor and Prometheus.
 
+![](gifs/7.gif)
+
 Additionally, you can build custom dashboards to monitor both node-level and application-specific resource usage.
 
+![](images/4.png)
 
 ### 6.4 Alertmanager
 While monitoring services and infrastructure, you can define custom alerting rules to notify when resource usage exceeds predefined thresholds. These rules and notification settings are configured in `alertmanager/config.yml`.
 
 In this project, Alertmanager is configured to send alerts to Discord in the following scenarios:
 + When the available memory on a node drops below 5%.
-+ When the embedding vector size differs from 768.
-+ When the embedding service consumes more than 1.5 GB of RAM.
++ When the CPU usage on a node exceeds 50%.
++ When the available disk space on a node drops below 10%.
+
+![](gifs/8.gif)

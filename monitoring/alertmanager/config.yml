@@ -5,4 +5,4 @@ route:
 receivers:
 - name: discord
   discord_configs:
-  - webhook_url: https://discord.com/api/webhooks/1401261214755061801/yfCqkNZcrh3TYTugbPY4RlbGP1fQu5ON3-u5_D3a4rQr0bIUcYGEKXX-P59q0VezCeCL
+  - webhook_url: https://discord.com/api/webhooks/1406183167211208734/F1iMAKbwN9SqAE0k3QSgwf0RXs-OTOvdHBLYJLKA6A6D89PkhOquz9mwjEMZmeBrIG6I

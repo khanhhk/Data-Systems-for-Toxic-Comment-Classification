@@ -10,20 +10,20 @@ groups:
       summary: Node out of memory
       description: "Node memory has reached {{ humanize $value}}%"
 
-  - alert: EmbeddingVectorSizeInvalid
-    expr: embedding_vector_size != 768
-    for: 5s
-    labels:
-      severity: critical
-    annotations:
-      summary: Embedding vector size mismatch
-      description: "Embedding vector has size {{ $value }} (expected: 768)"
-
-  - alert: EmbeddingMemoryHigh
-    expr: process_resident_memory_bytes > 1.5e+09  # ~1.5GB
-    for: 30s
+  - alert: HighCPULoad
+    expr: 100 - (avg by(instance)(rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 50
+    for: 2m
     labels:
       severity: warning
     annotations:
-      summary: High memory usage in embedding service
-      description: "Embedding process is using {{ humanize $value }} of RAM"
+      summary: High CPU usage
+      description: "CPU usage on {{ $labels.instance }} has exceeded 50% (current: {{ humanize $value }}%)"
+
+  - alert: DiskSpaceLow
+    expr: (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"}) * 100 < 10
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: Low disk space
+      description: "Disk space on {{ $labels.instance }} has dropped below 10% (available: {{ humanize $value }}%)"

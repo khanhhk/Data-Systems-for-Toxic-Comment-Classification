@@ -5,8 +5,8 @@ stages:
     deps:
     - path: data_version_control/extract_data.py
       hash: md5
-      md5: e6203363e35ee449c049e12750fe4338
-      size: 894
+      md5: 6d66cb6633204d7331acfd065bac443c
+      size: 1185
     outs:
     - path: data/production/cleaned_data.csv
       hash: md5
@@ -21,8 +21,8 @@ stages:
       size: 8091670
     - path: data_version_control/config.py
       hash: md5
-      md5: 3e7a73c50c11065d129f49870629ce59
-      size: 498
+      md5: 246b510ef9658c65972aec1dfa82f282
+      size: 535
     - path: data_version_control/dataloader.py
       hash: md5
       md5: 27c719653c886456f7e88d6b67172c58
@@ -33,5 +33,5 @@ stages:
       size: 650
     - path: data_version_control/train.py
       hash: md5
-      md5: c84b8eea536ab164243e8e1cdf791b93
-      size: 3601
+      md5: dc1a0919c9e8dee032adc03de5907c5c
+      size: 3759

@@ -9,12 +9,15 @@ from config import Config
 from dataloader import val_dataloader, train_dataloader
 from model import BertClassifier
 
+mlflow.set_tracking_uri(Config.MLFLOW_TRACKING_URI)
+mlflow.set_registry_uri(Config.MLFLOW_TRACKING_URI)
+mlflow.set_experiment("toxic-comment-classification-2")
+
 device = Config.DEVICE
 logger.info(f"Device: {device}")
 
 classifier = BertClassifier().to(device)
 
-# Chỉ fine-tune 2 layer linear
 for param in classifier.parameters():
     param.requires_grad = False
 for param in classifier.linear1.parameters():
@@ -28,10 +31,9 @@ optimizer = optim.Adam([
 ])
 loss_function = nn.BCEWithLogitsLoss()
 
-# === MLflow setup ===
-mlflow.set_experiment("toxic-comment-classification")
-
 with mlflow.start_run():
+    print("Tracking URI:", mlflow.get_tracking_uri())
+    print("Artifact URI:", mlflow.get_artifact_uri())
     mlflow.log_params({
         "epochs": Config.TRAIN_EPOCHS,
         "lr_linear1": 5e-4,
