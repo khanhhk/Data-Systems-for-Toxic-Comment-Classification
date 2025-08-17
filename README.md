@@ -1,3 +1,8 @@
+# Data Systems for Toxic Comment Classification
+
+# Description
+**Data Systems for Toxic Comment Classification** is a comprehensive end-to-end data and MLOps pipeline designed to support toxic comment classification using machine learning. The system integrates batch and streaming data workflows with Delta Lake and PostgreSQL, enabling both historical and real-time processing. Raw CSV files are ingested into a MinIO-backed lakehouse and processed via Apache Spark, while streaming updates are captured using Debezium, passed through Kafka, and handled by Apache Flink. Data is validated with Great Expectations, transformed using dbt, and managed in a staging-production schema within the data warehouse. Trino, connected to Hive Metastore, provides unified querying across lakehouse and warehouse layers. Model training and retraining are orchestrated by Apache Airflow, with data versioned by DVC and models tracked via MLflow. A full monitoring stack, including Prometheus, Grafana, Elasticsearch, and Kibana, ensures observability across the entire workflow. This architecture provides a robust, modular foundation for deploying and maintaining high-quality toxic comment classifiers in a local environment.
+
 # System Architecture
 ![](images/Architecture.svg)
 
