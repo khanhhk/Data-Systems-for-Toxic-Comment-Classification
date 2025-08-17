@@ -1,0 +1,15 @@
+stages:
+  extract_data:
+    cmd: python model_experiment/extract_data.py
+    deps:
+    - model_experiment/extract_data.py
+    outs:
+    - data/production/cleaned_data.csv
+  train_model:
+    cmd: python model_experiment/train.py
+    deps:
+    - data/production/cleaned_data.csv
+    - model_experiment/config.py
+    - model_experiment/dataloader.py
+    - model_experiment/model.py
+    - model_experiment/train.py

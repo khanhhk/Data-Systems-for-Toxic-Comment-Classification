@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: transform_table_clean
+    description: "Cleaned dataset test -> {{ target.schema }}.test"
+    columns:
+      - name: labels
+        data_type: bigint
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_set:
+              value_set: [0, 1]
+              quote_values: false
+
+      - name: input_ids
+        data_type: jsonb
+        tests:
+          - not_null
+
+      - name: attention_mask
+        data_type: jsonb
+        tests:
+          - not_null
+
+      - name: dbt_loaded_at
+        data_type: timestamptz
+        tests: []
+
+    config:
+      contract:
+        enforced: true

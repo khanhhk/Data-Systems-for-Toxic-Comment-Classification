@@ -1,0 +1,11 @@
+pandas==2.3.1
+psycopg2-binary==2.9.10
+SQLAlchemy==2.0.42
+PyYAML==6.0.2
+datasets==4.0.0
+torch==2.5.1
+loguru==0.7.3
+scikit-learn==1.6.1
+transformers==4.46.3
+dvc[s3]==3.62.0
+mlflow==3.1.4

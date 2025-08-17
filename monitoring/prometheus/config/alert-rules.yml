@@ -1,0 +1,29 @@
+groups:
+- name: System alerts
+  rules:
+  - alert: NodeOutOfMemory
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 5
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: Node out of memory
+      description: "Node memory has reached {{ humanize $value}}%"
+
+  - alert: HighCPULoad
+    expr: 100 - (avg by(instance)(rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 50
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: High CPU usage
+      description: "CPU usage on {{ $labels.instance }} has exceeded 50% (current: {{ humanize $value }}%)"
+
+  - alert: DiskSpaceLow
+    expr: (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"}) * 100 < 10
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: Low disk space
+      description: "Disk space on {{ $labels.instance }} has dropped below 10% (available: {{ humanize $value }}%)"

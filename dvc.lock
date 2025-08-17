@@ -1,0 +1,37 @@
+schema: '2.0'
+stages:
+  extract_data:
+    cmd: python model_experiment/extract_data.py
+    deps:
+    - path: model_experiment/extract_data.py
+      hash: md5
+      md5: 6d66cb6633204d7331acfd065bac443c
+      size: 1185
+    outs:
+    - path: data/production/cleaned_data.csv
+      hash: md5
+      md5: ede70ea9d8a7223eb10dd55beea5efc3
+      size: 8091670
+  train_model:
+    cmd: python model_experiment/train.py
+    deps:
+    - path: data/production/cleaned_data.csv
+      hash: md5
+      md5: ede70ea9d8a7223eb10dd55beea5efc3
+      size: 8091670
+    - path: model_experiment/config.py
+      hash: md5
+      md5: 246b510ef9658c65972aec1dfa82f282
+      size: 535
+    - path: model_experiment/dataloader.py
+      hash: md5
+      md5: 27c719653c886456f7e88d6b67172c58
+      size: 923
+    - path: model_experiment/model.py
+      hash: md5
+      md5: 065aad7f8cb006ed9af921bb13c75e20
+      size: 650
+    - path: model_experiment/train.py
+      hash: md5
+      md5: 27ac86784816a0006d83420dd287fa85
+      size: 3759

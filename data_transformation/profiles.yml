@@ -1,0 +1,19 @@
+data_transformation:
+  target: prod
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      port: 5432
+      user: k6
+      pass: k6
+      database: k6
+      schema: staging
+    prod:
+      type: postgres
+      host: localhost
+      port: 5432
+      user: k6
+      pass: k6
+      database: k6
+      schema: production
