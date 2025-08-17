@@ -21,11 +21,7 @@
 │    ├── deltalake                                
 │    └── raw
 ├── data_transformation                             
-│    ├── analyses
-│    ├── macros
 │    ├── models
-│    ├── seeds
-│    ├── snapshots
 │    ├── tests
 │    ├── .gitignore
 │    ├── .user.yml
