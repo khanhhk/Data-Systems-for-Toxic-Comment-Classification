@@ -1,7 +1,9 @@
+import logging
 import sys
 import traceback
-import logging
+
 from pyspark import SparkContext
+
 
 def _normalize_endpoint(endpoint: str, secure: bool) -> str:
     """
@@ -10,6 +12,7 @@ def _normalize_endpoint(endpoint: str, secure: bool) -> str:
     if endpoint.startswith("http://") or endpoint.startswith("https://"):
         return endpoint
     return f"{'https' if secure else 'http'}://{endpoint}"
+
 
 def load_minio_config(spark_context: SparkContext, minio_cfg: dict):
     """
@@ -31,8 +34,10 @@ def load_minio_config(spark_context: SparkContext, minio_cfg: dict):
         hadoop_conf.set("fs.s3a.access.key", minio_cfg["access_key"])
         hadoop_conf.set("fs.s3a.secret.key", minio_cfg["secret_key"])
         hadoop_conf.set("fs.s3a.endpoint", endpoint)
-        hadoop_conf.set("fs.s3a.aws.credentials.provider",
-                        "org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider")
+        hadoop_conf.set(
+            "fs.s3a.aws.credentials.provider",
+            "org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider",
+        )
         hadoop_conf.set("fs.s3a.path.style.access", "true")
         hadoop_conf.set("fs.s3a.connection.ssl.enabled", "true" if secure else "false")
         hadoop_conf.set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")

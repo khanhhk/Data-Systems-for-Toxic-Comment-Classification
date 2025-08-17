@@ -1,7 +1,9 @@
+from load_config_from_file import load_cfg
 from postgresql_client import PostgresSQLClient
-from helpers import load_cfg
+
 CFG_PATH = "./configs/config.yaml"
 cfg = load_cfg(CFG_PATH)["dw_postgres"]
+
 
 def main():
 

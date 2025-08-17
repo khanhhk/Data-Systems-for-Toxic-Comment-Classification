@@ -1,6 +1,9 @@
 import os
-import torch
 from pathlib import Path
+
+import torch
+
+
 class Config:
     BATCH_SIZE = 64
     MAX_LENGTH = 512

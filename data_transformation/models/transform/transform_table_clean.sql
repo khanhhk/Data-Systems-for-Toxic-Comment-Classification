@@ -13,7 +13,7 @@ WITH src AS (
     -- Chuyển đổi '{101,102}' → '[101,102]'
     replace(replace(input_ids, '{', '['), '}', ']') AS input_ids_json,
     replace(replace(attention_mask, '{', '['), '}', ']') AS attention_mask_json
-  FROM {{ source('staging_source', 'test_1') }}
+  FROM {{ source('staging_source', 'text_comment_1') }}
 ),
 valid AS (
   SELECT

@@ -11,7 +11,7 @@ WITH cleaned AS (
         replace(replace(attention_mask, '{', '['), '}', ']')
       ELSE attention_mask
     END AS attention_mask_json
-  FROM {{ source('staging_source', 'test_1') }}
+  FROM {{ source('staging_source', 'text_comment_1') }}
 ),
 filtered AS (
   SELECT *

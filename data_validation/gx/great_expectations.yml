@@ -142,7 +142,7 @@ fluent_datasources:
         type: table
         order_by: []
         batch_metadata: {}
-        table_name: test_1
+        table_name: text_comment_1
         schema_name: staging
     connection_string: postgresql+psycopg2://k6:k6@localhost:5432/k6
   my_ds2:
@@ -152,7 +152,7 @@ fluent_datasources:
         type: table
         order_by: []
         batch_metadata: {}
-        table_name: test_1
+        table_name: text_comment_1
         schema_name: staging
     connection_string: postgresql+psycopg2://k6:k6@localhost:5432/k6
   my_ds_kafka1:
@@ -169,7 +169,7 @@ fluent_datasources:
         type: table
         order_by: []
         batch_metadata: {}
-        table_name: test_1
+        table_name: text_comment_1
         schema_name: staging
     connection_string: postgresql+psycopg2://k6:k6@localhost:5432/k6
   my_ds_kafka2:

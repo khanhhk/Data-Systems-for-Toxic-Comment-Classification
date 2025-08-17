@@ -1,9 +1,11 @@
 # Please refer to the following documentation for more information
 # about Delta Lake: https://delta-io.github.io/delta-rs/python/usage.html
-from deltalake import DeltaTable
-from helpers import load_cfg
-from pathlib import Path
 import json
+from pathlib import Path
+
+from deltalake import DeltaTable
+from load_config_from_file import load_cfg
+
 CFG_FILE = "./configs/config.yaml"
 
 
@@ -12,9 +14,7 @@ def main():
 
     # Load Delta Lake table
     print("*" * 80)
-    dt = DeltaTable(
-        Path(data_cfg["deltalake_folder_path"])/"test_1",
-        version=0)
+    dt = DeltaTable(Path(data_cfg["deltalake_folder_path"]) / "text_comment_1", version=0)
     print("[INFO] Loaded Delta Lake table successfully!")
 
     # Investigate Delta Lake table

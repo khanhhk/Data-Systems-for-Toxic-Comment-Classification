@@ -1,6 +1,8 @@
-from airflow import DAG
-from airflow.operators.bash import BashOperator
 from datetime import datetime, timedelta
+
+from airflow.operators.bash import BashOperator
+
+from airflow import DAG
 
 default_args = {
     "owner": "airflow",
@@ -26,7 +28,7 @@ with DAG(
             echo "🔁 Running DVC repro..."
             which dvc
             dvc repro
-        """
+        """,
     )
 
     push_dvc_to_remote = BashOperator(
@@ -36,7 +38,7 @@ with DAG(
             cd /opt/project
             echo "☁️ Pushing DVC outputs to MinIO remote..."
             dvc push
-        """
+        """,
     )
 
     run_dvc_repro >> push_dvc_to_remote

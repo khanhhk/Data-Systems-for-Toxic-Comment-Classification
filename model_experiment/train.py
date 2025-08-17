@@ -1,12 +1,13 @@
 import os
-import torch
-from torch import nn, optim
-from sklearn.metrics import roc_auc_score
-from loguru import logger
-import mlflow
 
+import mlflow
+import torch
 from config import Config
-from dataloader import val_dataloader, train_dataloader
+from dataloader import train_dataloader, val_dataloader
+from loguru import logger
+from sklearn.metrics import roc_auc_score
+from torch import nn, optim
+
 from model import BertClassifier
 
 mlflow.set_tracking_uri(Config.MLFLOW_TRACKING_URI)
@@ -25,21 +26,25 @@ for param in classifier.linear1.parameters():
 for param in classifier.linear2.parameters():
     param.requires_grad = True
 
-optimizer = optim.Adam([
-    {'params': classifier.linear1.parameters(), 'lr': 5e-4},
-    {'params': classifier.linear2.parameters(), 'lr': 1e-5}
-])
+optimizer = optim.Adam(
+    [
+        {"params": classifier.linear1.parameters(), "lr": 5e-4},
+        {"params": classifier.linear2.parameters(), "lr": 1e-5},
+    ]
+)
 loss_function = nn.BCEWithLogitsLoss()
 
 with mlflow.start_run():
     print("Tracking URI:", mlflow.get_tracking_uri())
     print("Artifact URI:", mlflow.get_artifact_uri())
-    mlflow.log_params({
-        "epochs": Config.TRAIN_EPOCHS,
-        "lr_linear1": 5e-4,
-        "lr_linear2": 1e-5,
-        "threshold": Config.TOXIC_THRESHOLD
-    })
+    mlflow.log_params(
+        {
+            "epochs": Config.TRAIN_EPOCHS,
+            "lr_linear1": 5e-4,
+            "lr_linear2": 1e-5,
+            "threshold": Config.TOXIC_THRESHOLD,
+        }
+    )
 
     for epoch in range(Config.TRAIN_EPOCHS):
         classifier.train()
@@ -59,11 +64,15 @@ with mlflow.start_run():
 
             total_loss += loss.item()
             if step % 10 == 0 or step == len(train_dataloader):
-                logger.info(f"[Epoch {epoch+1} | Step {step}/{len(train_dataloader)}] Batch Loss: {loss.item():.4f}")
+                logger.info(
+                    f"[Epoch {epoch+1} | Step {step}/{len(train_dataloader)}] Batch Loss: {loss.item():.4f}"
+                )
 
         avg_train_loss = total_loss / len(train_dataloader)
-        logger.info(f"[Epoch {epoch+1}] Training completed. Average Loss: {avg_train_loss:.4f}")
-        mlflow.log_metric("avg_train_loss", avg_train_loss, step=epoch+1)
+        logger.info(
+            f"[Epoch {epoch+1}] Training completed. Average Loss: {avg_train_loss:.4f}"
+        )
+        mlflow.log_metric("avg_train_loss", avg_train_loss, step=epoch + 1)
 
         # Validation
         classifier.eval()
@@ -82,7 +91,7 @@ with mlflow.start_run():
                 labels_all.extend(labels.cpu().numpy())
 
         auc = roc_auc_score(labels_all, scores_all)
-        mlflow.log_metric("val_auc", auc, step=epoch+1)
+        mlflow.log_metric("val_auc", auc, step=epoch + 1)
         logger.info(f"[Epoch {epoch+1}] Validation AUC: {auc:.4f}")
 
         # Save checkpoint
@@ -93,7 +102,5 @@ with mlflow.start_run():
         logger.info(f"[Epoch {epoch+1}] Checkpoint saved: {model_path}")
 
     # Save and register final model
-    mlflow.pytorch.log_model(
-        classifier, 
-        registered_model_name="bert-toxic-classifier")
+    mlflow.pytorch.log_model(classifier, registered_model_name="bert-toxic-classifier")
     logger.info("Model registered in MLflow as 'bert-toxic-classifier'")

@@ -1,15 +1,15 @@
 stages:
   extract_data:
-    cmd: python data_version_control/extract_data.py
+    cmd: python model_experiment/extract_data.py
     deps:
-    - data_version_control/extract_data.py
+    - model_experiment/extract_data.py
     outs:
     - data/production/cleaned_data.csv
   train_model:
-    cmd: python data_version_control/train.py
+    cmd: python model_experiment/train.py
     deps:
     - data/production/cleaned_data.csv
-    - data_version_control/config.py
-    - data_version_control/dataloader.py
-    - data_version_control/model.py
-    - data_version_control/train.py
+    - model_experiment/config.py
+    - model_experiment/dataloader.py
+    - model_experiment/model.py
+    - model_experiment/train.py

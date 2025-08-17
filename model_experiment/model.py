@@ -1,7 +1,8 @@
 import torch
+from config import Config
 from torch import nn
 from transformers import DistilBertModel
-from config import Config
+
 
 class BertClassifier(nn.Module):
     def __init__(self):
@@ -12,7 +13,9 @@ class BertClassifier(nn.Module):
         self.linear2 = nn.Linear(3072, 1)
 
     def forward(self, input_ids, attention_mask):
-        vec = self.bert(input_ids=input_ids, attention_mask=attention_mask).last_hidden_state[:, 0, :]
+        vec = self.bert(
+            input_ids=input_ids, attention_mask=attention_mask
+        ).last_hidden_state[:, 0, :]
         x = self.dropout(vec)
         x = torch.relu(self.linear1(x))
         x = self.linear2(x)

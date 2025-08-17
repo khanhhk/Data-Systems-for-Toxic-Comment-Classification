@@ -1,34 +1,41 @@
-import sys
 import os
+import sys
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from data_version_control.config import Config
 import json
+
 from loguru import logger
-from pyflink.table import (
-    EnvironmentSettings, TableEnvironment, DataTypes
-)
-from pyflink.table.expressions import col, call
-from pyflink.table.udf import udf
 from pyflink.common import Row
+from pyflink.table import DataTypes, EnvironmentSettings, TableEnvironment
+from pyflink.table.expressions import call, col
+from pyflink.table.udf import udf
 from transformers import AutoTokenizer
+
+from model_experiment.config import Config
 
 JARS_PATH = f"{os.getcwd()}/jars/"
 
 logger.info(f"Loading tokenizer for model: {Config.MODEL_NAME}")
 tokenizer = AutoTokenizer.from_pretrained(Config.MODEL_NAME)
 
-@udf(result_type=DataTypes.ROW([
-    DataTypes.FIELD("input_ids", DataTypes.STRING()),
-    DataTypes.FIELD("attention_mask", DataTypes.STRING())
-]))
+
+@udf(
+    result_type=DataTypes.ROW(
+        [
+            DataTypes.FIELD("input_ids", DataTypes.STRING()),
+            DataTypes.FIELD("attention_mask", DataTypes.STRING()),
+        ]
+    )
+)
 def hf_tokenize(text: str):
     if text is None:
         text = ""
     enc = tokenizer(text, max_length=Config.MAX_LENGTH, truncation=True)
     return Row(
         input_ids=json.dumps(enc["input_ids"], ensure_ascii=False),
-        attention_mask=json.dumps(enc["attention_mask"], ensure_ascii=False)
+        attention_mask=json.dumps(enc["attention_mask"], ensure_ascii=False),
     )
+
 
 def main():
     # Streaming mode
@@ -43,12 +50,13 @@ def main():
         + f"file://{JARS_PATH}/flink-connector-jdbc-3.2.0-1.18.jar;"
         + f"file://{JARS_PATH}/postgresql-42.7.7.jar",
     )
-    
+
     # Đăng ký UDF
     t_env.create_temporary_system_function("hf_tokenize", hf_tokenize)
 
     # ---- Kafka source (Debezium JSON) ----
-    t_env.execute_sql(f"""
+    t_env.execute_sql(
+        f"""
         CREATE TABLE m2_streaming_src (
         comment_text STRING,
         labels INT
@@ -62,10 +70,12 @@ def main():
         'value.debezium-json.schema-include' = 'true',
         'value.debezium-json.ignore-parse-errors' = 'false'
         );
-    """)
+    """
+    )
 
     # ---- JDBC sink ----
-    t_env.execute_sql("""
+    t_env.execute_sql(
+        """
         CREATE TABLE staging_streaming_sink (
           id STRING NOT NULL,
           labels INT,
@@ -80,7 +90,8 @@ def main():
           'password' = 'k6',
           'driver' = 'org.postgresql.Driver'
         )
-    """)
+    """
+    )
 
     # Table API: select + tokenize + insert
     src = t_env.from_path("m2_streaming_src")
@@ -96,19 +107,20 @@ def main():
     #     logger.warning(f"Preview failed (maybe no data yet?): {e}")
 
     tok = src.select(
-        call('uuid').alias('id'),
+        call("uuid").alias("id"),
         col("labels"),
-        hf_tokenize(col("comment_text")).alias("tok")
+        hf_tokenize(col("comment_text")).alias("tok"),
     ).select(
         col("id"),
         col("labels"),
         col("tok").get("input_ids").alias("input_ids"),
-        col("tok").get("attention_mask").alias("attention_mask")
+        col("tok").get("attention_mask").alias("attention_mask"),
     )
 
     # Execute continuous insert
     logger.info("Waiting for the job (Ctrl+C to stop)...")
     tok.execute_insert("staging_streaming_sink").wait()
+
 
 if __name__ == "__main__":
     main()

@@ -8,7 +8,6 @@
 │    └──  config
 ├── airflow                               
 │    ├── dags
-│    ├── logs
 │    ├── Dockerfile
 │    └── requirements.txt
 ├── batch_processing                               
@@ -19,8 +18,7 @@
 ├── configs                              
 │    └──  config.yaml              
 ├── data                               
-│    ├── deltalake
-│    ├── kafka                                  
+│    ├── deltalake                                
 │    └── raw
 ├── data_transformation                             
 │    ├── analyses
@@ -38,19 +36,19 @@
 │    ├── gx
 │    ├── full_flow.ipynb                                 
 │    └── reload_and_validate.ipynb
-├── data_version_control                             
-│    ├── config.py                                      
-│    ├── dataloader.py
-│    ├── extract_data.py                          
-│    ├── model.py
-│    ├── requirements.txt           
-│    └── train.py
 ├── debezium
 │    ├── configs        
 │    └── run.sh                  
 ├── gifs
 ├── images
 ├── jars
+├── model_experiment                          
+│    ├── config.py                                      
+│    ├── dataloader.py
+│    ├── extract_data.py                          
+│    ├── model.py
+│    ├── requirements.txt           
+│    └── train.py
 ├── monitoring                             
 │    ├── alertmanager        
 │    ├── elk
@@ -66,7 +64,7 @@
 ├── utils                                           
 │    ├── create_schema.py         
 │    ├── create_table.py                         
-│    ├── helpers.py
+│    ├── load_config_from_file.py
 │    ├── investigate_delta_table.py
 │    ├── postgresql_client.py
 │    ├── streaming_data_to_postgresql.py
@@ -76,11 +74,11 @@
 ├── .env
 ├── .gitignore
 ├── airflow-docker-compose.yaml
-├── batch-docker-compose.yaml
+├── datalake-docker-compose.yaml
 ├── dvc.lock
 ├── dvc.yaml
-├── requirements.txt
-└── stream-docker-compose.yaml
+├── kafka-debezium-docker-compose.yaml
+└── requirements.txt 
 ```
 
 # Table of contents
@@ -131,7 +129,7 @@
 ## 1. Batch Processing with PySpark
 ### 1.1 Start Services
 ```shell
-docker compose -f batch-docker-compose.yaml up -d
+docker compose -f datalake-docker-compose.yaml up -d
 ```
 ### 1.2 Push Data to MinIO
 Execute the following scripts in order:
@@ -157,7 +155,7 @@ python batch_processing/main.py
 ## 2. Stream Processing with Apache Flink
 ### 2.1 Start Services
 ```shell
-docker compose -f stream-docker-compose.yaml up -d
+docker compose -f kafka-debezium-docker-compose.yaml up -d
 ```
 ### 2.2 Register Connectors
 Connect `Debezium` with `PostgreSQL` to capture Change Data Capture (CDC) events:
@@ -219,19 +217,19 @@ dvc remote modify minio_remote use_ssl false
 ### 4.2 Define and Run Pipeline Stages
 ```bash
 dvc stage add -n extract_data \
-  -d data_version_control/extract_data.py \
+  -d model_experiment/extract_data.py \
   -o data/production/cleaned_data.csv \
-  python data_version_control/extract_data.py
+  python model_experiment/extract_data.py
 ```
 
 ```bash
 dvc stage add -n train_model \
-  -d data_version_control/train.py \
-  -d data_version_control/dataloader.py \
-  -d data_version_control/model.py \
-  -d data_version_control/config.py \
+  -d model_experiment/train.py \
+  -d model_experiment/dataloader.py \
+  -d model_experiment/model.py \
+  -d model_experiment/config.py \
   -d data/production/cleaned_data.csv \
-  python data_version_control/train.py
+  python model_experiment/train.py
 ```
 
 ```bash

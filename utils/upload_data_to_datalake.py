@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
-from helpers import load_cfg
+
+from load_config_from_file import load_cfg
 from minio import Minio
 
 CFG_FILE = "./configs/config.yaml"
@@ -11,9 +12,12 @@ def upload_local_directory_to_minio(minio_client, local_path, bucket_name, minio
 
     for local_file in local_path.rglob("*"):
         if local_file.is_file():
-            remote_path = os.path.join(minio_path, str(local_file.relative_to(local_path)))
+            remote_path = os.path.join(
+                minio_path, str(local_file.relative_to(local_path))
+            )
             minio_client.fput_object(bucket_name, remote_path, str(local_file))
             print(f"📤 Uploaded {local_file} → {bucket_name}/{remote_path}")
+
 
 def main():
     cfg = load_cfg(CFG_FILE)
