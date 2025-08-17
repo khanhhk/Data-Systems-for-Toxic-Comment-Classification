@@ -14,7 +14,9 @@ def main():
 
     # Load Delta Lake table
     print("*" * 80)
-    dt = DeltaTable(Path(data_cfg["deltalake_folder_path"]) / "text_comment_1", version=0)
+    dt = DeltaTable(
+        Path(data_cfg["deltalake_folder_path"]) / "text_comment_1", version=0
+    )
     print("[INFO] Loaded Delta Lake table successfully!")
 
     # Investigate Delta Lake table

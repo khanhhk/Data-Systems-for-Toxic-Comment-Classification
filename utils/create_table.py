@@ -6,7 +6,6 @@ cfg = load_cfg(CFG_PATH)["dw_postgres"]
 
 
 def main():
-
     pc = PostgresSQLClient(
         database=cfg["database"],
         user=cfg["user"],

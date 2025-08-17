@@ -19,7 +19,6 @@ with DAG(
     catchup=False,
     tags=["ml", "dvc", "minio", "mlflow"],
 ) as dag:
-
     run_dvc_repro = BashOperator(
         task_id="run_dvc_repro",
         bash_command="""
